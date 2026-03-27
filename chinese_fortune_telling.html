@@ -1,679 +1,15 @@
-<!DOCTYPE html>
-<html lang="zh-HK">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>八字算命 - 中國傳統命理分析</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Microsoft JhengHei', '微軟正黑體', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-            color: #333;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #4c51bf 0%, #2d3748 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
-
-        .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        .header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-
-        .content {
-            padding: 40px;
-        }
-
-        .input-section {
-            background: #f7fafc;
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 30px;
-            border: 2px solid #e2e8f0;
-        }
-
-        .input-group {
-            margin-bottom: 20px;
-        }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #2d3748;
-            font-size: 1.1rem;
-        }
-
-        .input-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
-        select, input {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #cbd5e0;
-            border-radius: 10px;
-            font-size: 1rem;
-            background: white;
-            transition: all 0.3s ease;
-        }
-
-        select:focus, input:focus {
-            outline: none;
-            border-color: #4c51bf;
-            box-shadow: 0 0 0 3px rgba(76, 81, 191, 0.1);
-        }
-
-        .gender-selection {
-            display: flex;
-            gap: 20px;
-            margin-top: 10px;
-        }
-
-        .gender-option {
-            flex: 1;
-            text-align: center;
-        }
-
-        .gender-option input {
-            display: none;
-        }
-
-        .gender-option label {
-            display: block;
-            padding: 15px;
-            background: #edf2f7;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-
-        .gender-option input:checked + label {
-            background: #4c51bf;
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(76, 81, 191, 0.3);
-        }
-
-        .button-group {
-            display: flex;
-            gap: 15px;
-            margin-top: 30px;
-        }
-
-        button {
-            flex: 1;
-            padding: 16px;
-            border: none;
-            border-radius: 10px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .calculate-btn {
-            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-            color: white;
-        }
-
-        .calculate-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(72, 187, 120, 0.3);
-        }
-
-        .reset-btn {
-            background: #e2e8f0;
-            color: #4a5568;
-        }
-
-        .reset-btn:hover {
-            background: #cbd5e0;
-            transform: translateY(-2px);
-        }
-
-        .result-section {
-            display: none;
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            margin-top: 30px;
-            border: 2px solid #e2e8f0;
-            animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .result-header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #e2e8f0;
-        }
-
-        .result-header h2 {
-            color: #2d3748;
-            font-size: 2rem;
-            margin-bottom: 10px;
-        }
-
-        .result-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .result-card {
-            background: #f7fafc;
-            border-radius: 10px;
-            padding: 20px;
-            border-left: 4px solid #4c51bf;
-        }
-
-        .result-card h3 {
-            color: #2d3748;
-            margin-bottom: 15px;
-            font-size: 1.3rem;
-        }
-
-        .result-card p {
-            color: #4a5568;
-            line-height: 1.6;
-        }
-
-        .bazi-display {
-            background: #2d3748;
-            color: white;
-            padding: 25px;
-            border-radius: 10px;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .bazi-display h3 {
-            color: #cbd5e0;
-            margin-bottom: 15px;
-            font-size: 1.2rem;
-        }
-
-        .bazi-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .bazi-item {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            border-radius: 8px;
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-
-        .bazi-label {
-            display: block;
-            font-size: 0.9rem;
-            color: #a0aec0;
-            margin-top: 5px;
-        }
-
-        .fortune-details {
-            background: #fffaf0;
-            border: 2px solid #ed8936;
-            border-radius: 10px;
-            padding: 25px;
-            margin-top: 20px;
-        }
-
-        .fortune-details h3 {
-            color: #dd6b20;
-            margin-bottom: 15px;
-        }
-
-        .detail-item {
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #fed7d7;
-        }
-
-        .detail-item:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-
-        .detail-label {
-            font-weight: 600;
-            color: #c05621;
-            margin-bottom: 5px;
-        }
-
-        .detail-value {
-            color: #744210;
-            line-height: 1.6;
-        }
-
-        .warning {
-            background: #fed7d7;
-            border: 2px solid #fc8181;
-            border-radius: 10px;
-            padding: 20px;
-            margin-top: 30px;
-            text-align: center;
-        }
-
-        .warning p {
-            color: #c53030;
-            font-weight: 500;
-        }
-
-        .footer {
-            text-align: center;
-            padding: 20px;
-            color: #a0aec0;
-            font-size: 0.9rem;
-            border-top: 1px solid #e2e8f0;
-            margin-top: 30px;
-        }
-
-        @media (max-width: 600px) {
-            .container {
-                margin: 10px;
-                border-radius: 15px;
-            }
-            
-            .content {
-                padding: 20px;
-            }
-            
-            .header h1 {
-                font-size: 2rem;
-            }
-            
-            .input-row {
-                grid-template-columns: 1fr;
-            }
-            
-            .button-group {
-                flex-direction: column;
-            }
-            
-            .bazi-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>八字算命 - 命理分析系統</h1>
-            <p>輸入您的出生年月日時辰，探索命運軌跡</p>
-        </div>
-
-        <div class="content">
-            <div class="input-section">
-                <div class="input-group">
-                    <label>出生日期</label>
-                    <div class="input-row">
-                        <div>
-                            <label>年份</label>
-                            <select id="year">
-                                <option value="">選擇年份</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label>月份</label>
-                            <select id="month">
-                                <option value="">選擇月份</option>
-                                <option value="1">1月</option>
-                                <option value="2">2月</option>
-                                <option value="3">3月</option>
-                                <option value="4">4月</option>
-                                <option value="5">5月</option>
-                                <option value="6">6月</option>
-                                <option value="7">7月</option>
-                                <option value="8">8月</option>
-                                <option value="9">9月</option>
-                                <option value="10">10月</option>
-                                <option value="11">11月</option>
-                                <option value="12">12月</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label>日期</label>
-                            <select id="day">
-                                <option value="">選擇日期</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <label>出生時辰</label>
-                    <div class="input-row">
-                        <div>
-                            <label>時辰</label>
-                            <select id="hour">
-                                <option value="">選擇時辰</option>
-                                <option value="23-1">子時 (23:00-01:00)</option>
-                                <option value="1-3">丑時 (01:00-03:00)</option>
-                                <option value="3-5">寅時 (03:00-05:00)</option>
-                                <option value="5-7">卯時 (05:00-07:00)</option>
-                                <option value="7-9">辰時 (07:00-09:00)</option>
-                                <option value="9-11">巳時 (09:00-11:00)</option>
-                                <option value="11-13">午時 (11:00-13:00)</option>
-                                <option value="13-15">未時 (13:00-15:00)</option>
-                                <option value="15-17">申時 (15:00-17:00)</option>
-                                <option value="17-19">酉時 (17:00-19:00)</option>
-                                <option value="19-21">戌時 (19:00-21:00)</option>
-                                <option value="21-23">亥時 (21:00-23:00)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label>性別</label>
-                            <div class="gender-selection">
-                                <div class="gender-option">
-                                    <input type="radio" id="male" name="gender" value="male">
-                                    <label for="male">男</label>
-                                </div>
-                                <div class="gender-option">
-                                    <input type="radio" id="female" name="gender" value="female">
-                                    <label for="female">女</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="button-group">
-                    <button class="calculate-btn" onclick="calculateFortune()">開始算命</button>
-                    <button class="reset-btn" onclick="resetForm()">重新輸入</button>
-                </div>
-            </div>
-
-            <div class="result-section" id="resultSection">
-                <div class="result-header">
-                    <h2>您的命理分析結果</h2>
-                    <p id="birthInfo"></p>
-                </div>
-
-                <div class="bazi-display">
-                    <h3>八字命盤</h3>
-                    <div class="bazi-grid" id="baziGrid">
-                        <!-- 八字顯示區域 -->
-                    </div>
-                </div>
-
-                <div class="result-grid">
-                    <div class="result-card">
-                        <h3>五行分析</h3>
-                        <p id="fiveElements"></p>
-                    </div>
-                    <div class="result-card">
-                        <h3>命格特點</h3>
-                        <p id="characterTraits"></p>
-                    </div>
-                    <div class="result-card">
-                        <h3>事業運勢</h3>
-                        <p id="careerFortune"></p>
-                    </div>
-                    <div class="result-card">
-                        <h3>感情婚姻</h3>
-                        <p id="relationshipFortune"></p>
-                    </div>
-                </div>
-
-                <div class="fortune-details">
-                    <h3>詳細運勢分析</h3>
-                    <div class="detail-item">
-                        <div class="detail-label">健康運勢</div>
-                        <div class="detail-value" id="healthFortune"></div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">財富運勢</div>
-                        <div class="detail-value" id="wealthFortune"></div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">貴人運勢</div>
-                        <div class="detail-value" id="nobleFortune"></div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">流年建議</div>
-                        <div class="detail-value" id="yearlyAdvice"></div>
-                    </div>
-                </div>
-
-                <div class="warning">
-                    <p>⚠️ 溫馨提示：命理分析僅供參考，命運掌握在自己手中。保持積極心態，努力創造美好人生！</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="footer">
-            <p>© 2026 八字算命系統 | 中國傳統命理文化 | 僅供娛樂參考</p>
-        </div>
-    </div>
-
-    <script>
-        // 初始化年份選項 (1900-2026)
-        const yearSelect = document.getElementById('year');
-        const currentYear = 2026;
-        for (let year = 1900; year <= currentYear; year++) {
-            const option = document.createElement('option');
-            option.value = year;
-            option.textContent = `${year}年`;
-            yearSelect.appendChild(option);
-        }
-
-        // 初始化日期選項
-        const daySelect = document.getElementById('day');
-        for (let day = 1; day <= 31; day++) {
-            const option = document.createElement('option');
-            option.value = day;
-            option.textContent = `${day}日`;
-            daySelect.appendChild(option);
-        }
-
-        // 月份變化時更新日期選項
-        document.getElementById('month').addEventListener('change', updateDays);
-
-        function updateDays() {
-            const month = parseInt(document.getElementById('month').value);
-            const year = parseInt(document.getElementById('year').value);
-            const daySelect = document.getElementById('day');
-            
-            // 清除現有選項
-            daySelect.innerHTML = '<option value="">選擇日期</option>';
-            
-            // 如果沒有選擇月份或年份，顯示1-31天
-            if (!month || !year) {
-                for (let day = 1; day <= 31; day++) {
-                    const option = document.createElement('option');
-                    option.value = day;
-                    option.textContent = `${day}日`;
-                    daySelect.appendChild(option);
-                }
-                return;
-            }
-            
-            // 計算該月的天數
-            const daysInMonth = new Date(year, month, 0).getDate();
-            
-            for (let day = 1; day <= daysInMonth; day++) {
-                const option = document.createElement('option');
-                option.value = day;
-                option.textContent = `${day}日`;
-                daySelect.appendChild(option);
-            }
-            
-            // 如果之前選擇的日期超過新月份的天數，重置為空
-            if (daySelect.value > daysInMonth) {
-                daySelect.value = '';
-            }
-        }
-
-        // 天干地支數據
-        const heavenlyStems = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
-        const earthlyBranches = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
-        const zodiacAnimals = ['鼠', '牛', '虎', '兔', '龍', '蛇', '馬', '羊', '猴', '雞', '狗', '豬'];
-        const fiveElements = ['木', '木', '火', '火', '土', '土', '金', '金', '水', '水'];
-        const fiveElementColors = ['#48bb78', '#48bb78', '#f56565', '#f56565', '#ed8936', '#ed8936', '#4299e1', '#4299e1', '#805ad5', '#805ad5'];
-
-        // 命理分析數據庫
-        const fortuneData = {
-            // 五行分析
-            fiveElementsAnalysis: {
-                '木': '木命之人性格正直，富有同情心，適合從事教育、醫療、藝術等行業。',
-                '火': '火命之人熱情開朗，行動力強，適合從事銷售、公關、演藝等行業。',
-                '土': '土命之人穩重踏實，責任心強，適合從事管理、建築、金融等行業。',
-                '金': '金命之人果斷堅毅，追求完美，適合從事法律、科技、工程等行業。',
-                '水': '水命之人聰明靈活，適應力強，適合從事貿易、旅遊、諮詢等行業。'
-            },
-
-            // 命格特點
-            characterTraits: [
-                '天資聰穎，學習能力強，但需注意專注力的培養。',
-                '性格溫和，人緣良好，容易獲得他人幫助。',
-                '意志堅定，目標明確，適合創業或領導職位。',
-                '創意豐富，思維敏捷，適合從事創意產業。',
-                '務實穩重，責任心強，是可靠的合作夥伴。',
-                '情感豐富，善解人意，在人際關係中表現出色。',
-                '邏輯清晰，分析力強，適合從事研究工作。',
-                '行動力強，勇於嘗試，適合開拓新領域。'
-            ],
-
-            // 事業運勢
-            careerFortune: [
-                '事業發展平穩，適合在穩定環境中逐步晉升。',
-                '有創業機會，但需謹慎評估風險。',
-                '適合轉換跑道，新領域有更大發展空間。',
-                '貴人運強，容易獲得前輩提攜。',
-                '專業技能突出，適合深耕專業領域。',
-                '管理能力強，適合擔任領導職務。',
-                '適合團隊合作，能發揮協調能力。',
-                '有海外發展機會，適合跨國企業。'
-            ],
-
-            // 感情婚姻
-            relationshipFortune: [
-                '感情穩定，適合建立長期關係。',
-                '桃花運旺，但需謹慎選擇伴侶。',
-                '晚婚較佳，先專注事業發展。',
-                '適合與性格互補的伴侶相處。',
-                '家庭觀念強，是理想的伴侶人選。',
-                '需要更多時間了解彼此，不宜急進。',
-                '感情細膩，需要伴侶的理解和支持。',
-                '適合與志同道合的伴侶共同成長。'
-            ],
-
-            // 健康運勢
-            healthFortune: [
-                '身體健康，但需注意作息規律。',
-                '容易有腸胃問題，注意飲食健康。',
-                '需注意呼吸道健康，避免過敏源。',
-                '適合規律運動，增強體質。',
-                '注意壓力管理，避免過度勞累。',
-                '骨骼健康需特別關注。',
-                '心血管健康良好，保持良好生活習慣。',
-                '免疫力較強，但需注意季節變化。'
-            ],
-
-            // 財富運勢
-            wealthFortune: [
-                '正財穩定，適合穩健投資。',
-                '偏財運佳，有意外收穫機會。',
-                '適合房地產投資，長期回報可觀。',
-                '需謹慎理財，避免衝動消費。',
-                '合作投資有利，適合與信任夥伴合作。',
-                '適合學習理財知識，提升財富管理能力。',
-                '有繼承或贈與機會。',
-                '創業投資有潛力，但需做好風險控制。'
-            ],
-
-            // 貴人運勢
-            nobleFortune: [
-                '貴人來自長輩或上司，多聽取建議。',
-                '同輩朋友是重要貴人，加強人際網絡。',
-                '配偶或伴侶是重要支持力量。',
-                '專業領域的前輩是關鍵貴人。',
-                '需要主動尋求幫助，貴人自然出現。',
-                '貴人來自不同文化背景，拓展視野。',
-                '年輕一代可能是你的貴人。',
-                '貴人運強，但需懂得感恩回報。'
-            ],
-
-            // 流年建議
-            yearlyAdvice: [
-                '今年適合學習新技能，提升競爭力。',
-                '多參與社交活動，拓展人脈網絡。',
-                '注意健康管理，定期體檢。',
-                '適合置業或裝修，改善居住環境。',
-                '謹慎處理財務，避免重大投資。',
-                '適合旅行或進修，開闊眼界。',
-                '加強家庭關係，多陪伴家人。',
-                '把握事業轉型機會，勇敢嘗試。'
-            ]
-        };
-
-        // 計算八字
-        function calculateBazi(year, month, day, hour) {
-            // 簡化的八字計算邏輯（實際八字計算更複雜）
-            const yearIndex = (year - 4) % 10;
-            const monthIndex = (month - 1) % 12;
-            const dayIndex = (day - 1) % 10;
             const hourIndex = hour ? parseInt(hour.split('-')[0]) % 12 : 0;
 
             return {
-                yearStem: heavenlyStems[yearIndex],
-                yearBranch: earthlyBranches[yearIndex % 12],
-                monthStem: heavenlyStems[monthIndex],
-                monthBranch: earthlyBranches[monthIndex],
-                dayStem: heavenlyStems[dayIndex],
-                dayBranch: earthlyBranches[dayIndex % 12],
-                hourStem: heavenlyStems[hourIndex],
-                hourBranch: earthlyBranches[hourIndex]
+                yearStem: heavenlyStems[yearIndex >= 0 ? yearIndex : yearIndex + 10],
+                yearBranch: earthlyBranches[(year - 4) % 12 >= 0 ? (year - 4) % 12 : (year - 4) % 12 + 12],
+                monthStem: heavenlyStems[monthIndex >= 0 ? monthIndex : monthIndex + 10],
+                monthBranch: earthlyBranches[monthIndex >= 0 ? monthIndex : monthIndex + 12],
+                dayStem: heavenlyStems[dayIndex >= 0 ? dayIndex : dayIndex + 10],
+                dayBranch: earthlyBranches[dayIndex >= 0 ? dayIndex : dayIndex + 12],
+                hourStem: heavenlyStems[hourIndex >= 0 ? hourIndex : hourIndex + 10],
+                hourBranch: earthlyBranches[hourIndex >= 0 ? hourIndex : hourIndex + 12]
             };
-        }
-
-        // 獲取生肖
-        function getZodiac(year) {
-            return zodiacAnimals[(year - 4) % 12];
         }
 
         // 獲取五行
@@ -741,6 +77,102 @@
                 baziGrid.appendChild(div);
             });
 
+            // 分析數據庫
+            const fortuneData = {
+                // 五行分析
+                fiveElementsAnalysis: {
+                    '木': '性格溫和，有創造力，適合藝術、教育行業。',
+                    '火': '熱情開朗，領導力強，適合管理、銷售行業。',
+                    '土': '穩重踏實，責任心強，適合金融、建築行業。',
+                    '金': '果斷堅毅，邏輯性強，適合科技、法律行業。',
+                    '水': '聰明靈活，適應力強，適合貿易、傳媒行業。'
+                },
+
+                // 性格特質
+                characterTraits: [
+                    '性格開朗，善於交際，人緣很好。',
+                    '做事認真負責，有很強的責任心。',
+                    '聰明機智，學習能力強，適應環境快。',
+                    '意志堅定，不怕困難，有很強的毅力。',
+                    '心地善良，樂於助人，深受朋友信任。',
+                    '有創造力，喜歡嘗試新事物，不拘一格。',
+                    '思維敏捷，反應快速，善於解決問題。',
+                    '情緒穩定，處事冷靜，不易衝動。'
+                ],
+
+                // 事業運勢
+                careerFortune: [
+                    '事業發展順利，有晉升機會。',
+                    '適合創業，有領導才能。',
+                    '專業技能突出，在行業中有競爭力。',
+                    '合作運強，適合團隊工作。',
+                    '有貴人相助，事業上有突破機會。',
+                    '適合跨領域發展，有新的機遇。',
+                    '工作穩定，收入逐漸增長。',
+                    '有海外發展機會，視野開闊。'
+                ],
+
+                // 感情運勢
+                relationshipFortune: [
+                    '感情穩定，與伴侶關係融洽。',
+                    '有新的感情機會，適合主動出擊。',
+                    '需要多溝通，增進彼此了解。',
+                    '適合晚婚，先專注事業發展。',
+                    '感情豐富，容易吸引異性注意。',
+                    '需要更多耐心，感情需要時間培養。',
+                    '與伴侶有共同目標，關係更加緊密。',
+                    '單身者有機會遇到合適對象。'
+                ],
+
+                // 健康運勢
+                healthFortune: [
+                    '身體健康，精力充沛。',
+                    '需要注意腸胃問題，飲食要規律。',
+                    '適當運動，增強體質。',
+                    '注意休息，避免過度勞累。',
+                    '心理健康良好，情緒穩定。',
+                    '需要注意視力保護，減少屏幕時間。',
+                    '季節變化時注意保暖，預防感冒。',
+                    '免疫力較強，但需注意季節變化。'
+                ],
+
+                // 財富運勢
+                wealthFortune: [
+                    '正財穩定，適合穩健投資。',
+                    '偏財運佳，有意外收穫機會。',
+                    '適合房地產投資，長期回報可觀。',
+                    '需謹慎理財，避免衝動消費。',
+                    '合作投資有利，適合與信任夥伴合作。',
+                    '適合學習理財知識，提升財富管理能力。',
+                    '有繼承或贈與機會。',
+                    '創業投資有潛力，但需做好風險控制。'
+                ],
+
+                // 貴人運勢
+                nobleFortune: [
+                    '貴人來自長輩或上司，多聽取建議。',
+                    '同輩朋友是重要貴人，加強人際網絡。',
+                    '配偶或伴侶是重要支持力量。',
+                    '專業領域的前輩是關鍵貴人。',
+                    '需要主動尋求幫助，貴人自然出現。',
+                    '貴人來自不同文化背景，拓展視野。',
+                    '年輕一代可能是你的貴人。',
+                    '貴人運強，但需懂得感恩回報。'
+                ],
+
+                // 流年建議
+                yearlyAdvice: [
+                    '今年適合學習新技能，提升競爭力。',
+                    '多參與社交活動，拓展人脈網絡。',
+                    '注意健康管理，定期體檢。',
+                    '適合置業或裝修，改善居住環境。',
+                    '謹慎處理財務，避免重大投資。',
+                    '適合旅行或進修，開闊眼界。',
+                    '加強家庭關係，多陪伴家人。',
+                    '把握事業轉型機會，勇敢嘗試。'
+                ]
+            };
+
             // 顯示分析結果
             document.getElementById('fiveElements').textContent = 
                 `您的命主五行屬${mainElement}。${fortuneData.fiveElementsAnalysis[mainElement]}`;
@@ -777,100 +209,43 @@
 
         // 重置表單
         function resetForm() {
-            document.getElementById('year').value = '';
-            document.getElementById('month').value = '';
+            document.getElementById('year').value = 1990;
+            document.getElementById('month').value = 1;
             document.getElementById('day').value = '';
-            document.getElementById('hour').value = '';
+            document.getElementById('hour').value = '7-9';
             document.querySelectorAll('input[name="gender"]').forEach(input => {
                 input.checked = false;
             });
+            document.getElementById('male').checked = true;
             document.getElementById('resultSection').style.display = 'none';
             
             // 重置日期選項
-            const daySelect = document.getElementById('day');
-            daySelect.innerHTML = '<option value="">選擇日期</option>';
-            for (let day = 1; day <= 31; day++) {
-                const option = document.createElement('option');
-                option.value = day;
-                option.textContent = `${day}日`;
-                daySelect.appendChild(option);
-            }
+            updateDays();
         }
 
-        // 初始化頁面
-        // 初始化日期選項
-        function initializeDateOptions() {
-            const yearSelect = document.getElementById('year');
-            const monthSelect = document.getElementById('month');
-            const daySelect = document.getElementById('day');
-            const hourSelect = document.getElementById('hour');
-            
-            // 初始化年份 (1900-2026)
-            yearSelect.innerHTML = '<option value="">選擇年份</option>';
-            for (let year = 1900; year <= 2026; year++) {
-                const option = document.createElement('option');
-                option.value = year;
-                option.textContent = `${year}年`;
-                yearSelect.appendChild(option);
-            }
-            
-            // 初始化月份
-            monthSelect.innerHTML = '<option value="">選擇月份</option>';
-            for (let month = 1; month <= 12; month++) {
-                const option = document.createElement('option');
-                option.value = month;
-                option.textContent = `${month}月`;
-                monthSelect.appendChild(option);
-            }
-            
-            // 初始化日期 (先顯示1-31天)
-            daySelect.innerHTML = '<option value="">選擇日期</option>';
-            for (let day = 1; day <= 31; day++) {
-                const option = document.createElement('option');
-                option.value = day;
-                option.textContent = `${day}日`;
-                daySelect.appendChild(option);
-            }
-            
-            // 初始化時辰
-            hourSelect.innerHTML = '<option value="">選擇時辰</option>';
-            const hours = [
-                '23-1', '1-3', '3-5', '5-7', '7-9', '9-11',
-                '11-13', '13-15', '15-17', '17-19', '19-21', '21-23'
-            ];
-            const hourNames = [
-                '子時 (23:00-01:00)', '丑時 (01:00-03:00)', '寅時 (03:00-05:00)',
-                '卯時 (05:00-07:00)', '辰時 (07:00-09:00)', '巳時 (09:00-11:00)',
-                '午時 (11:00-13:00)', '未時 (13:00-15:00)', '申時 (15:00-17:00)',
-                '酉時 (17:00-19:00)', '戌時 (19:00-21:00)', '亥時 (21:00-23:00)'
-            ];
-            
-            hours.forEach((hour, index) => {
-                const option = document.createElement('option');
-                option.value = hour;
-                option.textContent = hourNames[index];
-                hourSelect.appendChild(option);
-            });
-            
-            // 設置默認值
-            yearSelect.value = 1990;
-            monthSelect.value = 1;
-            updateDays(); // 更新日期選項
-            
-            // 設置默認時辰
-            hourSelect.value = '7-9';
-            
-            // 設置默認性別
-            document.getElementById('male').checked = true;
-        }
-
-        window.onload = function() {
+        // 頁面加載時初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM已加載，開始初始化...');
             initializeDateOptions();
             
             // 添加事件監聽器
             document.getElementById('year').addEventListener('change', updateDays);
             document.getElementById('month').addEventListener('change', updateDays);
             
-            // 測試按鈕功能
-            console.log('頁面加載完成，日期選項已初始化');
+            console.log('初始化完成，頁面已準備好');
+        });
+
+        // 備用加載方法
+        window.onload = function() {
+            console.log('window.onload觸發');
+            // 確保DOMContentLoaded沒有觸發時執行
+            if (document.getElementById('year').options.length <= 1) {
+                console.log('DOMContentLoaded未觸發，手動初始化');
+                initializeDateOptions();
+                document.getElementById('year').addEventListener('change', updateDays);
+                document.getElementById('month').addEventListener('change', updateDays);
+            }
         };
+    </script>
+</body>
+</html>
