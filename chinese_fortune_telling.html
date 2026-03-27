@@ -1,46 +1,4 @@
-            const hourIndex = hour ? parseInt(hour.split('-')[0]) % 12 : 0;
-
-            return {
-                yearStem: heavenlyStems[yearIndex >= 0 ? yearIndex : yearIndex + 10],
-                yearBranch: earthlyBranches[(year - 4) % 12 >= 0 ? (year - 4) % 12 : (year - 4) % 12 + 12],
-                monthStem: heavenlyStems[monthIndex >= 0 ? monthIndex : monthIndex + 10],
-                monthBranch: earthlyBranches[monthIndex >= 0 ? monthIndex : monthIndex + 12],
-                dayStem: heavenlyStems[dayIndex >= 0 ? dayIndex : dayIndex + 10],
-                dayBranch: earthlyBranches[dayIndex >= 0 ? dayIndex : dayIndex + 12],
-                hourStem: heavenlyStems[hourIndex >= 0 ? hourIndex : hourIndex + 10],
-                hourBranch: earthlyBranches[hourIndex >= 0 ? hourIndex : hourIndex + 12]
-            };
-        }
-
-        // 獲取五行
-        function getFiveElement(stem) {
-            const index = heavenlyStems.indexOf(stem);
-            return fiveElements[index];
-        }
-
-        // 隨機選擇分析內容
-        function getRandomAnalysis(dataArray) {
-            return dataArray[Math.floor(Math.random() * dataArray.length)];
-        }
-
-        // 主要計算函數
-        function calculateFortune() {
-            // 獲取輸入值
-            const year = parseInt(document.getElementById('year').value);
-            const month = parseInt(document.getElementById('month').value);
-            const day = parseInt(document.getElementById('day').value);
-            const hour = document.getElementById('hour').value;
-            const gender = document.querySelector('input[name="gender"]:checked');
-
-            // 驗證輸入
-            if (!year || !month || !day || !hour || !gender) {
-                alert('請填寫完整的出生信息和性別！');
-                return;
-            }
-
-            // 計算八字
-            const bazi = calculateBazi(year, month, day, hour);
-            const zodiac = getZodiac(year);
+);
             const mainElement = getFiveElement(bazi.dayStem);
 
             // 顯示出生信息
@@ -79,7 +37,6 @@
 
             // 分析數據庫
             const fortuneData = {
-                // 五行分析
                 fiveElementsAnalysis: {
                     '木': '性格溫和，有創造力，適合藝術、教育行業。',
                     '火': '熱情開朗，領導力強，適合管理、銷售行業。',
@@ -87,8 +44,6 @@
                     '金': '果斷堅毅，邏輯性強，適合科技、法律行業。',
                     '水': '聰明靈活，適應力強，適合貿易、傳媒行業。'
                 },
-
-                // 性格特質
                 characterTraits: [
                     '性格開朗，善於交際，人緣很好。',
                     '做事認真負責，有很強的責任心。',
@@ -99,8 +54,6 @@
                     '思維敏捷，反應快速，善於解決問題。',
                     '情緒穩定，處事冷靜，不易衝動。'
                 ],
-
-                // 事業運勢
                 careerFortune: [
                     '事業發展順利，有晉升機會。',
                     '適合創業，有領導才能。',
@@ -111,8 +64,6 @@
                     '工作穩定，收入逐漸增長。',
                     '有海外發展機會，視野開闊。'
                 ],
-
-                // 感情運勢
                 relationshipFortune: [
                     '感情穩定，與伴侶關係融洽。',
                     '有新的感情機會，適合主動出擊。',
@@ -123,8 +74,6 @@
                     '與伴侶有共同目標，關係更加緊密。',
                     '單身者有機會遇到合適對象。'
                 ],
-
-                // 健康運勢
                 healthFortune: [
                     '身體健康，精力充沛。',
                     '需要注意腸胃問題，飲食要規律。',
@@ -135,8 +84,6 @@
                     '季節變化時注意保暖，預防感冒。',
                     '免疫力較強，但需注意季節變化。'
                 ],
-
-                // 財富運勢
                 wealthFortune: [
                     '正財穩定，適合穩健投資。',
                     '偏財運佳，有意外收穫機會。',
@@ -147,8 +94,6 @@
                     '有繼承或贈與機會。',
                     '創業投資有潛力，但需做好風險控制。'
                 ],
-
-                // 貴人運勢
                 nobleFortune: [
                     '貴人來自長輩或上司，多聽取建議。',
                     '同輩朋友是重要貴人，加強人際網絡。',
@@ -159,8 +104,6 @@
                     '年輕一代可能是你的貴人。',
                     '貴人運強，但需懂得感恩回報。'
                 ],
-
-                // 流年建議
                 yearlyAdvice: [
                     '今年適合學習新技能，提升競爭力。',
                     '多參與社交活動，拓展人脈網絡。',
@@ -205,6 +148,8 @@
             document.getElementById('resultSection').scrollIntoView({ 
                 behavior: 'smooth' 
             });
+            
+            console.log('命運計算完成，結果已顯示');
         }
 
         // 重置表單
@@ -221,31 +166,42 @@
             
             // 重置日期選項
             updateDays();
+            
+            console.log('表單已重置');
         }
 
-        // 頁面加載時初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM已加載，開始初始化...');
-            initializeDateOptions();
+        // 頁面初始化
+        function initializePage() {
+            console.log('開始初始化頁面...');
+            
+            // 初始化所有選項
+            initializeAllOptions();
             
             // 添加事件監聽器
             document.getElementById('year').addEventListener('change', updateDays);
             document.getElementById('month').addEventListener('change', updateDays);
+            document.getElementById('calculateBtn').addEventListener('click', calculateFortune);
+            document.getElementById('resetBtn').addEventListener('click', resetForm);
             
-            console.log('初始化完成，頁面已準備好');
-        });
+            console.log('頁面初始化完成，所有功能已準備就緒');
+        }
 
-        // 備用加載方法
-        window.onload = function() {
-            console.log('window.onload觸發');
-            // 確保DOMContentLoaded沒有觸發時執行
+        // 確保頁面完全加載後初始化
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializePage);
+        } else {
+            initializePage();
+        }
+
+        // 備用初始化方法
+        window.addEventListener('load', function() {
+            console.log('window.load事件觸發');
+            // 檢查是否已經初始化
             if (document.getElementById('year').options.length <= 1) {
-                console.log('DOMContentLoaded未觸發，手動初始化');
-                initializeDateOptions();
-                document.getElementById('year').addEventListener('change', updateDays);
-                document.getElementById('month').addEventListener('change', updateDays);
+                console.log('檢測到未初始化，執行備用初始化');
+                initializePage();
             }
-        };
+        });
     </script>
 </body>
 </html>
