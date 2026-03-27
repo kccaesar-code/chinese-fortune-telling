@@ -78,11 +78,22 @@ scp -r fortune-telling-website/ user@server:/var/www/html/
 - 設置為"公開分享"
 - 通過分享鏈接訪問
 
-### 4. GitHub Pages
-1. 創建GitHub倉庫
-2. 上傳文件到倉庫
+### 4. GitHub Pages（推薦）
+詳細上傳指南請查看 [GITHUB_UPLOAD_GUIDE.md](GITHUB_UPLOAD_GUIDE.md)
+
+**快速步驟**：
+1. 創建GitHub倉庫（例如：`chinese-fortune-telling`）
+2. 上傳所有文件到倉庫
 3. 啟用GitHub Pages功能
-4. 通過 `https://username.github.io/repository-name/` 訪問
+4. 通過以下地址訪問：
+   - `https://你的用戶名.github.io/chinese-fortune-telling/chinese_fortune_telling.html`
+   - `https://你的用戶名.github.io/chinese-fortune-telling/simple_fortune_telling.html`
+
+**使用幫助腳本**：
+```bash
+# 運行上傳幫助腳本
+./upload_to_github.sh 你的GitHub用戶名 倉庫名稱
+```
 
 ## 使用指南
 
