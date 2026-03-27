@@ -521,7 +521,16 @@
             // 清除現有選項
             daySelect.innerHTML = '<option value="">選擇日期</option>';
             
-            if (!month || !year) return;
+            // 如果沒有選擇月份或年份，顯示1-31天
+            if (!month || !year) {
+                for (let day = 1; day <= 31; day++) {
+                    const option = document.createElement('option');
+                    option.value = day;
+                    option.textContent = `${day}日`;
+                    daySelect.appendChild(option);
+                }
+                return;
+            }
             
             // 計算該月的天數
             const daysInMonth = new Date(year, month, 0).getDate();
@@ -531,6 +540,11 @@
                 option.value = day;
                 option.textContent = `${day}日`;
                 daySelect.appendChild(option);
+            }
+            
+            // 如果之前選擇的日期超過新月份的天數，重置為空
+            if (daySelect.value > daysInMonth) {
+                daySelect.value = '';
             }
         }
 
@@ -694,8 +708,12 @@
             const mainElement = getFiveElement(bazi.dayStem);
 
             // 顯示出生信息
+            const hourParts = hour.split('-');
+            const hourDisplay = hourParts.length === 2 ? 
+                `${hourParts[0]}:00-${hourParts[1]}:00` : '未知時辰';
+            
             document.getElementById('birthInfo').textContent = 
-                `出生日期：${year}年${month}月${day}日 ${hour.split('-')[0]}:00-${hour.split('-')[1]}:00 | 生肖：${zodiac}`;
+                `出生日期：${year}年${month}月${day}日 ${hourDisplay} | 生肖：${zodiac}`;
 
             // 顯示八字
             const baziGrid = document.getElementById('baziGrid');
@@ -780,8 +798,79 @@
         }
 
         // 初始化頁面
+        // 初始化日期選項
+        function initializeDateOptions() {
+            const yearSelect = document.getElementById('year');
+            const monthSelect = document.getElementById('month');
+            const daySelect = document.getElementById('day');
+            const hourSelect = document.getElementById('hour');
+            
+            // 初始化年份 (1900-2026)
+            yearSelect.innerHTML = '<option value="">選擇年份</option>';
+            for (let year = 1900; year <= 2026; year++) {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = `${year}年`;
+                yearSelect.appendChild(option);
+            }
+            
+            // 初始化月份
+            monthSelect.innerHTML = '<option value="">選擇月份</option>';
+            for (let month = 1; month <= 12; month++) {
+                const option = document.createElement('option');
+                option.value = month;
+                option.textContent = `${month}月`;
+                monthSelect.appendChild(option);
+            }
+            
+            // 初始化日期 (先顯示1-31天)
+            daySelect.innerHTML = '<option value="">選擇日期</option>';
+            for (let day = 1; day <= 31; day++) {
+                const option = document.createElement('option');
+                option.value = day;
+                option.textContent = `${day}日`;
+                daySelect.appendChild(option);
+            }
+            
+            // 初始化時辰
+            hourSelect.innerHTML = '<option value="">選擇時辰</option>';
+            const hours = [
+                '23-1', '1-3', '3-5', '5-7', '7-9', '9-11',
+                '11-13', '13-15', '15-17', '17-19', '19-21', '21-23'
+            ];
+            const hourNames = [
+                '子時 (23:00-01:00)', '丑時 (01:00-03:00)', '寅時 (03:00-05:00)',
+                '卯時 (05:00-07:00)', '辰時 (07:00-09:00)', '巳時 (09:00-11:00)',
+                '午時 (11:00-13:00)', '未時 (13:00-15:00)', '申時 (15:00-17:00)',
+                '酉時 (17:00-19:00)', '戌時 (19:00-21:00)', '亥時 (21:00-23:00)'
+            ];
+            
+            hours.forEach((hour, index) => {
+                const option = document.createElement('option');
+                option.value = hour;
+                option.textContent = hourNames[index];
+                hourSelect.appendChild(option);
+            });
+            
+            // 設置默認值
+            yearSelect.value = 1990;
+            monthSelect.value = 1;
+            updateDays(); // 更新日期選項
+            
+            // 設置默認時辰
+            hourSelect.value = '7-9';
+            
+            // 設置默認性別
+            document.getElementById('male').checked = true;
+        }
+
         window.onload = function() {
-            // 設置默認年份為1990
-            document.getElementById('year').value = 1990;
-            updateDays();
+            initializeDateOptions();
+            
+            // 添加事件監聽器
+            document.getElementById('year').addEventListener('change', updateDays);
+            document.getElementById('month').addEventListener('change', updateDays);
+            
+            // 測試按鈕功能
+            console.log('頁面加載完成，日期選項已初始化');
         };
