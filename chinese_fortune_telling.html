@@ -1,206 +1,143 @@
- mainElement = getFiveElement(bazi.dayStem);
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>簡單八字算命</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        select, button { padding: 10px; margin: 5px; font-size: 16px; }
+        button { background: #4CAF50; color: white; border: none; cursor: pointer; }
+        .result { margin-top: 20px; padding: 15px; background: #f0f0f0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>八字算命</h1>
+        
+        <div>
+            <label>出生年份:</label>
+            <select id="year">
+                <option value="">選擇年份</option>
+            </select>
+        </div>
+        
+        <div>
+            <label>出生月份:</label>
+            <select id="month">
+                <option value="">選擇月份</option>
+            </select>
+        </div>
+        
+        <div>
+            <label>出生日期:</label>
+            <select id="day">
+                <option value="">選擇日期</option>
+            </select>
+        </div>
+        
+        <div>
+            <label>性別:</label>
+            <input type="radio" name="gender" id="male" value="male"> 男
+            <input type="radio" name="gender" id="female" value="female"> 女
+        </div>
+        
+        <button id="calculateBtn">開始算命</button>
+        
+        <div class="result" id="result" style="display:none;">
+            <h3>算命結果</h3>
+            <p id="resultText"></p>
+        </div>
+    </div>
 
-            // 顯示出生信息
-            const hourParts = hour.split('-');
-            const hourDisplay = hourParts.length === 2 ? 
-                `${hourParts[0]}:00-${hourParts[1]}:00` : '未知時辰';
+    <script>
+        // 初始化選項
+        function initOptions() {
+            console.log('初始化開始...');
             
-            document.getElementById('birthInfo').textContent = 
-                `出生日期：${year}年${month}月${day}日 ${hourDisplay} | 生肖：${zodiac}`;
-
-            // 顯示八字
-            const baziGrid = document.getElementById('baziGrid');
-            baziGrid.innerHTML = '';
-            
-            const baziItems = [
-                { label: '年柱', stem: bazi.yearStem, branch: bazi.yearBranch },
-                { label: '月柱', stem: bazi.monthStem, branch: bazi.monthBranch },
-                { label: '日柱', stem: bazi.dayStem, branch: bazi.dayBranch },
-                { label: '時柱', stem: bazi.hourStem, branch: bazi.hourBranch }
-            ];
-
-            baziItems.forEach(item => {
-                const element = getFiveElement(item.stem);
-                const colorIndex = fiveElements.indexOf(element);
-                const color = fiveElementColors[colorIndex];
-
-                const div = document.createElement('div');
-                div.className = 'bazi-item';
-                div.style.background = color;
-                div.innerHTML = `
-                    ${item.stem}${item.branch}
-                    <span class="bazi-label">${item.label}</span>
-                `;
-                baziGrid.appendChild(div);
-            });
-
-            // 分析數據庫
-            const fortuneData = {
-                fiveElementsAnalysis: {
-                    '木': '性格溫和，有創造力，適合藝術、教育行業。',
-                    '火': '熱情開朗，領導力強，適合管理、銷售行業。',
-                    '土': '穩重踏實，責任心強，適合金融、建築行業。',
-                    '金': '果斷堅毅，邏輯性強，適合科技、法律行業。',
-                    '水': '聰明靈活，適應力強，適合貿易、傳媒行業。'
-                },
-                characterTraits: [
-                    '性格開朗，善於交際，人緣很好。',
-                    '做事認真負責，有很強的責任心。',
-                    '聰明機智，學習能力強，適應環境快。',
-                    '意志堅定，不怕困難，有很強的毅力。',
-                    '心地善良，樂於助人，深受朋友信任。',
-                    '有創造力，喜歡嘗試新事物，不拘一格。',
-                    '思維敏捷，反應快速，善於解決問題。',
-                    '情緒穩定，處事冷靜，不易衝動。'
-                ],
-                careerFortune: [
-                    '事業發展順利，有晉升機會。',
-                    '適合創業，有領導才能。',
-                    '專業技能突出，在行業中有競爭力。',
-                    '合作運強，適合團隊工作。',
-                    '有貴人相助，事業上有突破機會。',
-                    '適合跨領域發展，有新的機遇。',
-                    '工作穩定，收入逐漸增長。',
-                    '有海外發展機會，視野開闊。'
-                ],
-                relationshipFortune: [
-                    '感情穩定，與伴侶關係融洽。',
-                    '有新的感情機會，適合主動出擊。',
-                    '需要多溝通，增進彼此了解。',
-                    '適合晚婚，先專注事業發展。',
-                    '感情豐富，容易吸引異性注意。',
-                    '需要更多耐心，感情需要時間培養。',
-                    '與伴侶有共同目標，關係更加緊密。',
-                    '單身者有機會遇到合適對象。'
-                ],
-                healthFortune: [
-                    '身體健康，精力充沛。',
-                    '需要注意腸胃問題，飲食要規律。',
-                    '適當運動，增強體質。',
-                    '注意休息，避免過度勞累。',
-                    '心理健康良好，情緒穩定。',
-                    '需要注意視力保護，減少屏幕時間。',
-                    '季節變化時注意保暖，預防感冒。',
-                    '免疫力較強，但需注意季節變化。'
-                ],
-                wealthFortune: [
-                    '正財穩定，適合穩健投資。',
-                    '偏財運佳，有意外收穫機會。',
-                    '適合房地產投資，長期回報可觀。',
-                    '需謹慎理財，避免衝動消費。',
-                    '合作投資有利，適合與信任夥伴合作。',
-                    '適合學習理財知識，提升財富管理能力。',
-                    '有繼承或贈與機會。',
-                    '創業投資有潛力，但需做好風險控制。'
-                ],
-                nobleFortune: [
-                    '貴人來自長輩或上司，多聽取建議。',
-                    '同輩朋友是重要貴人，加強人際網絡。',
-                    '配偶或伴侶是重要支持力量。',
-                    '專業領域的前輩是關鍵貴人。',
-                    '需要主動尋求幫助，貴人自然出現。',
-                    '貴人來自不同文化背景，拓展視野。',
-                    '年輕一代可能是你的貴人。',
-                    '貴人運強，但需懂得感恩回報。'
-                ],
-                yearlyAdvice: [
-                    '今年適合學習新技能，提升競爭力。',
-                    '多參與社交活動，拓展人脈網絡。',
-                    '注意健康管理，定期體檢。',
-                    '適合置業或裝修，改善居住環境。',
-                    '謹慎處理財務，避免重大投資。',
-                    '適合旅行或進修，開闊眼界。',
-                    '加強家庭關係，多陪伴家人。',
-                    '把握事業轉型機會，勇敢嘗試。'
-                ]
-            };
-
-            // 顯示分析結果
-            document.getElementById('fiveElements').textContent = 
-                `您的命主五行屬${mainElement}。${fortuneData.fiveElementsAnalysis[mainElement]}`;
-            
-            document.getElementById('characterTraits').textContent = 
-                getRandomAnalysis(fortuneData.characterTraits);
-            
-            document.getElementById('careerFortune').textContent = 
-                getRandomAnalysis(fortuneData.careerFortune);
-            
-            document.getElementById('relationshipFortune').textContent = 
-                getRandomAnalysis(fortuneData.relationshipFortune);
-            
-            document.getElementById('healthFortune').textContent = 
-                getRandomAnalysis(fortuneData.healthFortune);
-            
-            document.getElementById('wealthFortune').textContent = 
-                getRandomAnalysis(fortuneData.wealthFortune);
-            
-            document.getElementById('nobleFortune').textContent = 
-                getRandomAnalysis(fortuneData.nobleFortune);
-            
-            document.getElementById('yearlyAdvice').textContent = 
-                getRandomAnalysis(fortuneData.yearlyAdvice);
-
-            // 顯示結果區域
-            document.getElementById('resultSection').style.display = 'block';
-            
-            // 滾動到結果區域
-            document.getElementById('resultSection').scrollIntoView({ 
-                behavior: 'smooth' 
-            });
-            
-            console.log('命運計算完成，結果已顯示');
-        }
-
-        // 重置表單
-        function resetForm() {
-            document.getElementById('year').value = 1990;
-            document.getElementById('month').value = 1;
-            document.getElementById('day').value = '';
-            document.getElementById('hour').value = '7-9';
-            document.querySelectorAll('input[name="gender"]').forEach(input => {
-                input.checked = false;
-            });
-            document.getElementById('male').checked = true;
-            document.getElementById('resultSection').style.display = 'none';
-            
-            // 重置日期選項
-            updateDays();
-            
-            console.log('表單已重置');
-        }
-
-        // 頁面初始化
-        function initializePage() {
-            console.log('開始初始化頁面...');
-            
-            // 初始化所有選項
-            initializeAllOptions();
-            
-            // 添加事件監聽器
-            document.getElementById('year').addEventListener('change', updateDays);
-            document.getElementById('month').addEventListener('change', updateDays);
-            document.getElementById('calculateBtn').addEventListener('click', calculateFortune);
-            document.getElementById('resetBtn').addEventListener('click', resetForm);
-            
-            console.log('頁面初始化完成，所有功能已準備就緒');
-        }
-
-        // 確保頁面完全加載後初始化
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initializePage);
-        } else {
-            initializePage();
-        }
-
-        // 備用初始化方法
-        window.addEventListener('load', function() {
-            console.log('window.load事件觸發');
-            // 檢查是否已經初始化
-            if (document.getElementById('year').options.length <= 1) {
-                console.log('檢測到未初始化，執行備用初始化');
-                initializePage();
+            // 年份 (1900-2026)
+            const yearSelect = document.getElementById('year');
+            for (let year = 1900; year <= 2026; year++) {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year + '年';
+                yearSelect.appendChild(option);
             }
+            
+            // 月份 (1-12)
+            const monthSelect = document.getElementById('month');
+            for (let month = 1; month <= 12; month++) {
+                const option = document.createElement('option');
+                option.value = month;
+                option.textContent = month + '月';
+                monthSelect.appendChild(option);
+            }
+            
+            // 日期 (1-31)
+            const daySelect = document.getElementById('day');
+            for (let day = 1; day <= 31; day++) {
+                const option = document.createElement('option');
+                option.value = day;
+                option.textContent = day + '日';
+                daySelect.appendChild(option);
+            }
+            
+            // 設置默認值
+            yearSelect.value = 1990;
+            monthSelect.value = 1;
+            document.getElementById('male').checked = true;
+            
+            console.log('初始化完成');
+        }
+        
+        // 計算命運
+        function calculate() {
+            const year = document.getElementById('year').value;
+            const month = document.getElementById('month').value;
+            const day = document.getElementById('day').value;
+            const gender = document.querySelector('input[name="gender"]:checked');
+            
+            if (!year || !month || !day || !gender) {
+                alert('請填寫完整信息！');
+                return;
+            }
+            
+            // 簡單的算命邏輯
+            const zodiacs = ['鼠', '牛', '虎', '兔', '龍', '蛇', '馬', '羊', '猴', '雞', '狗', '豬'];
+            const zodiacIndex = (parseInt(year) - 4) % 12;
+            const zodiac = zodiacs[zodiacIndex >= 0 ? zodiacIndex : zodiacIndex + 12];
+            
+            const fortunes = [
+                '今年運勢不錯，事業有發展機會。',
+                '感情方面需要多溝通，增進了解。',
+                '財運亨通，適合投資理財。',
+                '健康方面要注意飲食規律。',
+                '有貴人相助，事業上有突破。',
+                '適合學習新技能，提升競爭力。'
+            ];
+            
+            const randomFortune = fortunes[Math.floor(Math.random() * fortunes.length)];
+            
+            document.getElementById('resultText').textContent = 
+                `您的生肖是${zodiac}。${randomFortune}`;
+            document.getElementById('result').style.display = 'block';
+        }
+        
+        // 頁面加載時初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM加載完成，開始初始化');
+            initOptions();
+            
+            // 綁定按鈕事件
+            document.getElementById('calculateBtn').addEventListener('click', calculate);
+            
+            console.log('頁面準備就緒');
         });
+        
+        // 備用初始化
+        window.onload = function() {
+            console.log('頁面完全加載');
+        };
     </script>
 </body>
 </html>
